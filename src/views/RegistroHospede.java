@@ -27,7 +27,7 @@ import javax.swing.JSeparator;
 
 @SuppressWarnings("serial")
 public class RegistroHospede extends JFrame {
-
+	private int idReserva;
 	private JPanel contentPane;
 	private JTextField txtNome;
 	private JTextField txtSobrenome;
@@ -46,7 +46,7 @@ public class RegistroHospede extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					RegistroHospede frame = new RegistroHospede();
+					RegistroHospede frame = new RegistroHospede(0);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -58,8 +58,8 @@ public class RegistroHospede extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public RegistroHospede() {
-		
+	public RegistroHospede(int id) {
+		this.idReserva = id;
 		setIconImage(Toolkit.getDefaultToolkit().getImage(RegistroHospede.class.getResource("/imagenes/lOGO-50PX.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 910, 634);
@@ -242,7 +242,8 @@ public class RegistroHospede extends JFrame {
 		txtNreserva.setBackground(Color.WHITE);
 		txtNreserva.setBorder(javax.swing.BorderFactory.createEmptyBorder());
 		contentPane.add(txtNreserva);
-		
+		txtNreserva.setText(String.valueOf(idReserva));
+		txtNreserva.setEditable(false);
 		JSeparator separator_1_2 = new JSeparator();
 		separator_1_2.setBounds(560, 170, 289, 2);
 		separator_1_2.setForeground(new Color(12, 138, 199));
