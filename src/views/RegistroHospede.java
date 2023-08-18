@@ -7,6 +7,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
 import java.awt.Color;
 import com.toedter.calendar.JDateChooser;
+
+import controller.HospedeController;
+import model.Hospede;
+
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
@@ -20,6 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.text.Format;
+import java.util.Date;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
 import javax.swing.SwingConstants;
@@ -38,6 +43,7 @@ public class RegistroHospede extends JFrame {
 	private JLabel labelExit;
 	private JLabel labelAtras;
 	int xMouse, yMouse;
+	private HospedeController hospedeController = new HospedeController();
 
 	/**
 	 * Launch the application.
@@ -285,7 +291,29 @@ public class RegistroHospede extends JFrame {
 		btnsalvar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				  try {
+				        String nome = txtNome.getText();
+				        String sobrenome = txtSobrenome.getText();
+				        Date dataNascimento = txtDataN.getDate();
+				        double telefone = Double.parseDouble(txtTelefone.getText());
+				        String nacionalidade = (String) txtNacionalidade.getSelectedItem();
+
+				        if (nome.isEmpty() || sobrenome.isEmpty() || dataNascimento == null || nacionalidade == null) {
+				            JOptionPane.showMessageDialog(null, "Preencha todos os campos obrigatórios.");
+				            return; // Não prosseguir se algum campo estiver vazio ou nulo
+				        }
+
+				        Hospede hospede = new Hospede(nome, sobrenome, dataNascimento, telefone, nacionalidade, idReserva);
+				        hospedeController.save(hospede);
+				        JOptionPane.showMessageDialog(null, "Hóspede cadastrado com sucesso.");
+				        MenuUsuario menu = new MenuUsuario();
+				        menu.setVisible(true);
+				        dispose();
+				    } catch (NumberFormatException ex) {
+				        JOptionPane.showMessageDialog(null, "Formato inválido para o telefone.");
+				    }
 			}
+			
 		});
 		btnsalvar.setLayout(null);
 		btnsalvar.setBackground(new Color(12, 138, 199));

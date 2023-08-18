@@ -330,6 +330,8 @@ public class ReservasView extends JFrame {
 					JOptionPane.showMessageDialog(null, "Reserva efetuada com sucesso.");
 					RegistroHospede registro = new RegistroHospede(reserva.getId());
 					registro.setVisible(true);
+					dispose();
+					
 				} else {
 					JOptionPane.showMessageDialog(null, "Deve preencher todos os campos e deve permanecer ao menos um dia.");
 				}
