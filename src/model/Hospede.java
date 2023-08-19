@@ -7,11 +7,11 @@ public class Hospede {
 	private String nome;
 	private String sobrenome;
 	private Date dataNascimento;
-	private double telefone;
+	private long telefone;
 	private String nacionalidade;
 	private int idReserva;
 	
-	public Hospede (String nome, String sobrenome, Date dataNascimento, double telefone, String nacionalidade,
+	public Hospede (String nome, String sobrenome, Date dataNascimento, long telefone, String nacionalidade,
 			int idReserva) {
 		super();
 		this.nome = nome;
@@ -46,10 +46,10 @@ public class Hospede {
 	public void setDataNascimento(Date dataNascimento) {
 		this.dataNascimento = dataNascimento;
 	}
-	public double getTelefone() {
+	public long getTelefone() {
 		return telefone;
 	}
-	public void setTelefone(Double telefone) {
+	public void setTelefone(long telefone) {
 		this.telefone = telefone;
 	}
 	public String getNacionalidade() {

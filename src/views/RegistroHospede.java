@@ -295,7 +295,7 @@ public class RegistroHospede extends JFrame {
 				        String nome = txtNome.getText();
 				        String sobrenome = txtSobrenome.getText();
 				        Date dataNascimento = txtDataN.getDate();
-				        double telefone = Double.parseDouble(txtTelefone.getText());
+				        long telefone = Long.parseLong(txtTelefone.getText());
 				        String nacionalidade = (String) txtNacionalidade.getSelectedItem();
 
 				        if (nome.isEmpty() || sobrenome.isEmpty() || dataNascimento == null || nacionalidade == null) {
@@ -310,7 +310,8 @@ public class RegistroHospede extends JFrame {
 				        menu.setVisible(true);
 				        dispose();
 				    } catch (NumberFormatException ex) {
-				        JOptionPane.showMessageDialog(null, "Formato inválido para o telefone.");
+				        JOptionPane.showMessageDialog(null, "Algum campo está incorreto ou "
+				        		+ "formato inválido para o telefone.");
 				    }
 			}
 			

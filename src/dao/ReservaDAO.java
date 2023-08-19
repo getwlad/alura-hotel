@@ -16,13 +16,14 @@ public class ReservaDAO {
 	}
 	
 	public void save(Reserva reserva) {
-		String sql = "INSERT INTO reservas(DataEntrada, DataSaida, FormaPagamento)"
-				+ " values (?, ?, ?)";
+		String sql = "INSERT INTO reservas(data_entrada, data_saida, forma_pagamento, valor)"
+				+ " values (?, ?, ?, ?)";
 		try (PreparedStatement pstm = 
 				connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
 			pstm.setDate(1, new Date(reserva.getDataEntrada().getTime()));
 			pstm.setDate(2,  new Date(reserva.getDataSaida().getTime()));
 			pstm.setString(3, reserva.getFormaPagamento());
+			pstm.setInt(4, reserva.getValor());
 			
 			pstm.execute();
 			
@@ -36,5 +37,32 @@ public class ReservaDAO {
 		catch(SQLException e){
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public Reserva buscarReserva(int numeroReserva) {
+		Reserva reserva = new Reserva(null, null, null, 0);
+		String sql = "SELECT * from reservas where id = ?";
+		try(PreparedStatement pstm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
+			pstm.setInt(1, numeroReserva);
+			try(ResultSet rst = pstm.executeQuery()){
+				while(rst.next()) {
+					int id =rst.getInt("id");
+					Date dataE = rst.getDate("data_entrada");
+					Date dataS = rst.getDate("data_saida");
+					String formaPagamento = rst.getString("forma_pagamento");
+					int valor = rst.getInt("valor");
+					reserva.setId(id);
+					reserva.setDataEntrada(dataE);
+					reserva.setDataSaida(dataS);
+					reserva.setFormaPagamento(formaPagamento);
+					reserva.setValor(valor);
+				}
+			}
+		}
+		catch(SQLException e){
+			throw new RuntimeException(e);
+		}
+		return reserva;
+		
 	}
 }

@@ -325,7 +325,7 @@ public class ReservasView extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				if (dataEntrada != null && dataSaida != null && dias > 0) {
 					String formaPagamento = (String) ReservasView.txtFormaPagamento.getSelectedItem();
-					Reserva reserva = new Reserva(dataEntrada, dataSaida, formaPagamento);
+					Reserva reserva = new Reserva(dataEntrada, dataSaida, formaPagamento, valorTotal);
 					reservaController.save(reserva);
 					JOptionPane.showMessageDialog(null, "Reserva efetuada com sucesso.");
 					RegistroHospede registro = new RegistroHospede(reserva.getId());

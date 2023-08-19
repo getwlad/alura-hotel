@@ -6,11 +6,19 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import controller.HospedeController;
+import controller.ReservaController;
+import model.Hospede;
+import model.Reserva;
+
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ImageIcon;
 import java.awt.Color;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JTabbedPane;
 import java.awt.Toolkit;
@@ -20,6 +28,8 @@ import javax.swing.ListSelectionModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 public class Buscar extends JFrame {
@@ -33,7 +43,10 @@ public class Buscar extends JFrame {
 	private JLabel labelAtras;
 	private JLabel labelExit;
 	int xMouse, yMouse;
-
+	private ReservaController reservaController = new ReservaController();
+	private HospedeController hospedeController = new HospedeController();
+	private ArrayList<Hospede> hospedes = new ArrayList<Hospede>();
+	private Reserva reserva = new Reserva(null, null, null, 0);
 	/**
 	 * Launch the application.
 	 */
@@ -208,7 +221,20 @@ public class Buscar extends JFrame {
 		btnbuscar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
+				
+				if(panel.getSelectedIndex() == 0 ) {
+					try {
+					    int id = Integer.parseInt(txtBuscar.getText());
+					    buscarReserva(id);
+					} catch (NumberFormatException numberException) {
+					    JOptionPane.showMessageDialog(null, "Digite apenas números");
+					}
+				}
+				else {
+					    String sobrenome = txtBuscar.getText();
+					    buscarHospede(sobrenome);
+				}
+				
 			}
 		});
 		btnbuscar.setLayout(null);
@@ -254,12 +280,55 @@ public class Buscar extends JFrame {
 		setResizable(false);
 	}
 	
+	private void buscarReserva(int id) {
+		modelo.setRowCount(0);
+		reserva = reservaController.buscarReserva(id);
+		if(reserva.getDataEntrada() == null) {
+			JOptionPane.showMessageDialog(null, "Reserva não encontrada");
+			return;
+		}
+		
+		DecimalFormat decimalFormat = new DecimalFormat("#.00");
+		String valorFormatado = (reserva.getValor() == 0.0) ? "0.00" : decimalFormat.format(reserva.getValor());
+		
+	    Object[] rowData = {
+	        reserva.getId(),
+	        reserva.getDataEntrada(),
+	        reserva.getDataSaida(),
+	        valorFormatado,
+	        reserva.getFormaPagamento()
+	    };
+	    
+	    modelo.addRow(rowData);
+	}
+	private void buscarHospede(String sobrenome) {
+			modeloHospedes.setRowCount(0);
+			hospedes = hospedeController.buscarHospedes(sobrenome);
+			if(hospedes.size() <= 0) {
+				JOptionPane.showMessageDialog(null, "Hospede(s) não encontrado");
+				return;
+			}
+			
+			for(Hospede hospede : hospedes) {
+				Object[] rowData = {
+						hospede.getId(),
+						hospede.getNome(),
+						hospede.getSobrenome(),
+						hospede.getDataNascimento(),
+						hospede.getNacionalidade(),
+						hospede.getTelefone(),
+						hospede.getIdReserva()
+				};
+				modeloHospedes.addRow(rowData);
+				
+			}
+	}
+	
 	//Código que permite movimentar a janela pela tela seguindo a posição de "x" e "y"	
 	 private void headerMousePressed(java.awt.event.MouseEvent evt) {
 	        xMouse = evt.getX();
 	        yMouse = evt.getY();
 	    }
-
 	    private void headerMouseDragged(java.awt.event.MouseEvent evt) {
 	        int x = evt.getXOnScreen();
 	        int y = evt.getYOnScreen();

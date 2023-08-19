@@ -1,6 +1,7 @@
 package controller;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 
 import dao.HospedeDAO;
 import factory.ConnectionFactory;
@@ -15,5 +16,8 @@ public class HospedeController {
 	}
 	public void save(Hospede hospede) {
 		this.hospedeDAO.salvar(hospede);
+	}
+	public ArrayList<Hospede> buscarHospedes(String sobrenome){
+		return this.hospedeDAO.buscarHospedes(sobrenome);
 	}
 }

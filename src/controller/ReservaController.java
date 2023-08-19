@@ -16,4 +16,7 @@ public class ReservaController {
 	public void save(Reserva reserva) {
 		this.reservaDAO.save(reserva);
 	}
+	public Reserva buscarReserva(int idReserva) {
+		return this.reservaDAO.buscarReserva(idReserva);
+	}
 }
