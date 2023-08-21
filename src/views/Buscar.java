@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 
 import controller.HospedeController;
@@ -14,6 +15,7 @@ import model.Reserva;
 
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import java.awt.Color;
 import javax.swing.JLabel;
@@ -28,7 +30,10 @@ import javax.swing.ListSelectionModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.math.BigDecimal;
+import java.sql.Date;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 @SuppressWarnings("serial")
@@ -46,7 +51,7 @@ public class Buscar extends JFrame {
 	private ReservaController reservaController = new ReservaController();
 	private HospedeController hospedeController = new HospedeController();
 	private ArrayList<Hospede> hospedes = new ArrayList<Hospede>();
-	private Reserva reserva = new Reserva(null, null, null, 0);
+	private Reserva reserva = new Reserva(null, null, null, new BigDecimal(0));
 	/**
 	 * Launch the application.
 	 */
@@ -124,7 +129,7 @@ public class Buscar extends JFrame {
 		modeloHospedes.addColumn("Numero de Reserva");
 		JScrollPane scroll_tableHuespedes = new JScrollPane(tbHospedes);
 		panel.addTab("Huéspedes", new ImageIcon(Buscar.class.getResource("/imagenes/pessoas.png")), scroll_tableHuespedes, null);
-		scroll_tableHuespedes.setVisible(true);
+		scroll_tableHuespedes.setVisible(true); 
 		
 		JLabel lblNewLabel_2 = new JLabel("");
 		lblNewLabel_2.setIcon(new ImageIcon(Buscar.class.getResource("/imagenes/Ha-100px.png")));
@@ -256,6 +261,86 @@ public class Buscar extends JFrame {
 		btnEditar.setBounds(635, 508, 122, 35);
 		btnEditar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 		contentPane.add(btnEditar);
+		btnEditar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				 if (panel.getSelectedIndex() == 0) {
+		                // Editar reserva
+					 int selectedRow = tbReservas.getSelectedRow();
+					 selectedRow = selectedRow < 0 ? 0 : selectedRow; 
+					 try {
+					String idReservaStr = String.valueOf(modelo.getValueAt(selectedRow, 0));
+					String dataEntradaStr = String.valueOf(modelo.getValueAt(selectedRow, 1));
+					String dataSaidaStr = String.valueOf(modelo.getValueAt(selectedRow, 2));
+					String valorStr = String.valueOf(modelo.getValueAt(selectedRow, 3));
+					
+		             int idReserva = Integer.parseInt(idReservaStr);
+		             
+		            
+		             
+		             java.util.Date dataEntrada =    dateFormat.parse(dataEntradaStr); 
+		             java.util.Date dataSaida = dateFormat.parse(dataSaidaStr); 
+		             
+		             BigDecimal  valor = new BigDecimal(valorStr);
+		             
+		             String formaPagamento = (String) modelo.getValueAt(selectedRow, 4);
+		             reserva.setId(idReserva);
+		             reserva.setDataEntrada(dataEntrada);
+		             reserva.setDataSaida(dataSaida);
+		             reserva.setValor(valor);
+		             reserva.setFormaPagamento(formaPagamento);
+		             reservaController.updateReserva(reserva);
+		             JOptionPane.showMessageDialog(null, "Reserva atualizada");
+					 }
+					 catch(Exception ex) {
+						 JOptionPane.showMessageDialog(btnEditar, "Verifique "
+						 		+ "todos os campos se estão no formato adequado");
+						 throw new RuntimeException(ex);
+					 }
+		             
+		            } else {
+		                // Editar hóspede
+		            	for (int row = 0; row < modeloHospedes.getRowCount(); row++) {
+		            		try {
+		                    String idHospedeStr =  String.valueOf(modeloHospedes.getValueAt(row, 0)); 
+		                    String nome = String.valueOf(modeloHospedes.getValueAt(row, 1)); 
+		                    String sobrenome =  String.valueOf(modeloHospedes.getValueAt(row, 2)); 
+		                    String dataNascimentoStr = String.valueOf(modeloHospedes.getValueAt(row, 3)); 
+		                    String nacionalidade =  String.valueOf(modeloHospedes.getValueAt(row, 4)); 
+		                    String telefoneStr = String.valueOf(modeloHospedes.getValueAt(row, 5)); 
+		                    String idReservaStr =  String.valueOf(modeloHospedes.getValueAt(row, 6));
+		                    
+		                    int idHospede = Integer.parseInt(idHospedeStr);
+		                    java.util.Date dataNascimento = dateFormat.parse(dataNascimentoStr);
+		                    long telefone = Long.parseLong(telefoneStr);
+		                    int idReserva = Integer.parseInt(idReservaStr);
+		                    
+		                    Hospede hospede = hospedes.get(row);
+		                    hospede.setId(idHospede);
+		                    hospede.setNome(nome);
+		                    hospede.setSobrenome(sobrenome);
+		                    hospede.setDataNascimento(dataNascimento);
+		                    hospede.setNacionalidade(nacionalidade);
+		                    hospede.setTelefone(telefone);
+		                    hospede.setIdReserva(idReserva);
+		                    
+		                    hospedeController.atualizarHospede(hospede);
+		                    JOptionPane.showMessageDialog(null, "Hospedes atualizados");
+		            		}
+		                    catch(Exception ex) {
+		                    	JOptionPane.showMessageDialog(btnEditar, "Verifique "
+								 		+ "todos os campos se estão no formato adequado");
+		                    		throw new RuntimeException(ex);
+		                    	}
+		                    
+		                }
+		            }
+				
+				
+			}
+		});
+		
 		
 		JLabel lblEditar = new JLabel("EDITAR");
 		lblEditar.setHorizontalAlignment(SwingConstants.CENTER);
@@ -280,6 +365,7 @@ public class Buscar extends JFrame {
 		setResizable(false);
 	}
 	
+	
 	private void buscarReserva(int id) {
 		modelo.setRowCount(0);
 		reserva = reservaController.buscarReserva(id);
@@ -288,14 +374,13 @@ public class Buscar extends JFrame {
 			return;
 		}
 		
-		DecimalFormat decimalFormat = new DecimalFormat("#.00");
-		String valorFormatado = (reserva.getValor() == 0.0) ? "0.00" : decimalFormat.format(reserva.getValor());
+		
 		
 	    Object[] rowData = {
 	        reserva.getId(),
 	        reserva.getDataEntrada(),
 	        reserva.getDataSaida(),
-	        valorFormatado,
+	        reserva.getValor(),
 	        reserva.getFormaPagamento()
 	    };
 	    
@@ -323,6 +408,8 @@ public class Buscar extends JFrame {
 				
 			}
 	}
+	
+	
 	
 	//Código que permite movimentar a janela pela tela seguindo a posição de "x" e "y"	
 	 private void headerMousePressed(java.awt.event.MouseEvent evt) {

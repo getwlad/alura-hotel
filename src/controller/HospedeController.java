@@ -20,4 +20,7 @@ public class HospedeController {
 	public ArrayList<Hospede> buscarHospedes(String sobrenome){
 		return this.hospedeDAO.buscarHospedes(sobrenome);
 	}
+	public void atualizarHospede(Hospede hospede) {
+		this.hospedeDAO.updateHospede(hospede);
+	}
 }

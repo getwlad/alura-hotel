@@ -27,6 +27,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.Toolkit;
 import java.beans.PropertyChangeListener;
+import java.math.BigDecimal;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
@@ -40,7 +41,7 @@ public class ReservasView extends JFrame {
 	private Date dataEntrada;
 	private Date dataSaida;	
 	private int dias = 0;
-	private int valorTotal = 0;
+	private BigDecimal valorTotal = new BigDecimal(0);
 	private JPanel contentPane;
 	public static JTextField txtValor;
 	public static JDateChooser txtDataE;
@@ -368,7 +369,7 @@ public class ReservasView extends JFrame {
     		 return;
     	 }
     	 int diaria = 30;
-    	 this.valorTotal = dias * diaria;
+    	 this.valorTotal = new BigDecimal(dias * diaria);
     	 DecimalFormat decimalFormat = new DecimalFormat("#0.00");
     	 String valor = decimalFormat.format(this.valorTotal);
     	 txtValor.setText("R$ " + valor);

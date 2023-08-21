@@ -1,5 +1,6 @@
 package model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class Reserva {
@@ -7,9 +8,9 @@ public class Reserva {
 	private Date dataEntrada;
 	private Date dataSaida;
 	private String formaPagamento;
-	private int valor;
+	private BigDecimal valor;
 	
-	public Reserva(Date dataEntrada, Date dataSaida, String formaPagamento, int valor) {
+	public Reserva(Date dataEntrada, Date dataSaida, String formaPagamento, BigDecimal valor) {
 		super();
 		this.dataEntrada = dataEntrada;
 		this.dataSaida = dataSaida;
@@ -43,11 +44,11 @@ public class Reserva {
 	public void setFormaPagamento(String formaPagamento) {
 		this.formaPagamento = formaPagamento;
 	}
-	public int getValor() {
+	public BigDecimal getValor() {
 		return valor;
 	}
 
-	public void setValor(int valor) {
+	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
 }

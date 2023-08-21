@@ -70,4 +70,28 @@ public class HospedeDAO {
 		}
 		return hospedes;
 	}
+	
+	public void updateHospede(Hospede hospede) {
+		String sql = "UPDATE hospedes SET nome = ?, sobrenome = ?, data_nascimento = ?,"
+				+ " telefone = ?, nacionalidade = ?, idReserva = ? where id = ?;";
+		try(PreparedStatement pstm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
+			pstm.setString(1, hospede.getNome());
+			pstm.setString(2, hospede.getSobrenome());
+			pstm.setDate(3, new Date(hospede.getDataNascimento().getTime()));
+			pstm.setLong(4, hospede.getTelefone());
+			pstm.setString(5, hospede.getNacionalidade());
+			pstm.setInt(6, hospede.getIdReserva());
+			pstm.setInt(7, hospede.getId());
+			pstm.execute();
+			
+			try(ResultSet rs = pstm.getGeneratedKeys()){
+				while(rs.next()) {
+					
+				}
+			}
+		}
+		catch(SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

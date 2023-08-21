@@ -1,5 +1,6 @@
 package dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -23,7 +24,7 @@ public class ReservaDAO {
 			pstm.setDate(1, new Date(reserva.getDataEntrada().getTime()));
 			pstm.setDate(2,  new Date(reserva.getDataSaida().getTime()));
 			pstm.setString(3, reserva.getFormaPagamento());
-			pstm.setInt(4, reserva.getValor());
+			pstm.setBigDecimal(4, reserva.getValor());
 			
 			pstm.execute();
 			
@@ -39,8 +40,8 @@ public class ReservaDAO {
 		}
 	}
 	
-	public Reserva buscarReserva(int numeroReserva) {
-		Reserva reserva = new Reserva(null, null, null, 0);
+	public Reserva buscar(int numeroReserva) {
+		Reserva reserva = new Reserva(null, null, null, new BigDecimal(2));
 		String sql = "SELECT * from reservas where id = ?";
 		try(PreparedStatement pstm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
 			pstm.setInt(1, numeroReserva);
@@ -50,7 +51,7 @@ public class ReservaDAO {
 					Date dataE = rst.getDate("data_entrada");
 					Date dataS = rst.getDate("data_saida");
 					String formaPagamento = rst.getString("forma_pagamento");
-					int valor = rst.getInt("valor");
+					BigDecimal valor = rst.getBigDecimal("valor");
 					reserva.setId(id);
 					reserva.setDataEntrada(dataE);
 					reserva.setDataSaida(dataS);
@@ -63,6 +64,24 @@ public class ReservaDAO {
 			throw new RuntimeException(e);
 		}
 		return reserva;
-		
+	}
+	
+	public void update(Reserva reserva) {
+		String sql = "UPDATE reservas SET data_entrada = ?, data_saida = ?,"
+		           + " forma_pagamento = ?, valor = ? WHERE id = ?; ";
+		try(PreparedStatement pstm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+			pstm.setDate(1, new Date(reserva.getDataEntrada().getTime()));
+			pstm.setDate(2,  new Date(reserva.getDataSaida().getTime()));
+			pstm.setString(3, reserva.getFormaPagamento());
+			pstm.setBigDecimal(4, reserva.getValor());
+			pstm.setInt(5, reserva.getId());
+			pstm.execute();
+			try (ResultSet rst = pstm.getGeneratedKeys()) {
+				while (rst.next()) {
+					reserva.setId(rst.getInt(1));
+				}
+			}
+		}
+		catch(SQLException e) { throw new RuntimeException(e);}
 	}
 }

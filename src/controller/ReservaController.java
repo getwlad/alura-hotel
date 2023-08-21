@@ -17,6 +17,10 @@ public class ReservaController {
 		this.reservaDAO.save(reserva);
 	}
 	public Reserva buscarReserva(int idReserva) {
-		return this.reservaDAO.buscarReserva(idReserva);
+		return this.reservaDAO.buscar(idReserva);
+	}
+	
+	public void updateReserva(Reserva reserva) {
+		this.reservaDAO.update(reserva);
 	}
 }
