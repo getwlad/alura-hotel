@@ -23,4 +23,7 @@ public class HospedeController {
 	public void atualizarHospede(Hospede hospede) {
 		this.hospedeDAO.updateHospede(hospede);
 	}
+	public void excluirHospede(int id) {
+		this.hospedeDAO.excluir(id);
+	}
 }

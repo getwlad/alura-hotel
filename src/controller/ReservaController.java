@@ -23,4 +23,8 @@ public class ReservaController {
 	public void updateReserva(Reserva reserva) {
 		this.reservaDAO.update(reserva);
 	}
+	public void excluirReserva(int id) {
+		this.reservaDAO.excluir(id);
+		
+	}
 }

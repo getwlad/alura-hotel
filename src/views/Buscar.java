@@ -72,6 +72,7 @@ public class Buscar extends JFrame {
 	 * Create the frame.
 	 */
 	public Buscar() {
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Buscar.class.getResource("/imagenes/lOGO-50PX.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 910, 571);
@@ -264,79 +265,27 @@ public class Buscar extends JFrame {
 		btnEditar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
 				 if (panel.getSelectedIndex() == 0) {
 		                // Editar reserva
 					 int selectedRow = tbReservas.getSelectedRow();
 					 selectedRow = selectedRow < 0 ? 0 : selectedRow; 
-					 try {
-					String idReservaStr = String.valueOf(modelo.getValueAt(selectedRow, 0));
-					String dataEntradaStr = String.valueOf(modelo.getValueAt(selectedRow, 1));
-					String dataSaidaStr = String.valueOf(modelo.getValueAt(selectedRow, 2));
-					String valorStr = String.valueOf(modelo.getValueAt(selectedRow, 3));
-					
-		             int idReserva = Integer.parseInt(idReservaStr);
-		             
-		            
-		             
-		             java.util.Date dataEntrada =    dateFormat.parse(dataEntradaStr); 
-		             java.util.Date dataSaida = dateFormat.parse(dataSaidaStr); 
-		             
-		             BigDecimal  valor = new BigDecimal(valorStr);
-		             
-		             String formaPagamento = (String) modelo.getValueAt(selectedRow, 4);
-		             reserva.setId(idReserva);
-		             reserva.setDataEntrada(dataEntrada);
-		             reserva.setDataSaida(dataSaida);
-		             reserva.setValor(valor);
-		             reserva.setFormaPagamento(formaPagamento);
+					 Reserva reserva = criarReservaComLinha(selectedRow);
 		             reservaController.updateReserva(reserva);
 		             JOptionPane.showMessageDialog(null, "Reserva atualizada");
-					 }
-					 catch(Exception ex) {
-						 JOptionPane.showMessageDialog(btnEditar, "Verifique "
-						 		+ "todos os campos se estão no formato adequado");
-						 throw new RuntimeException(ex);
-					 }
+					
 		             
 		            } else {
 		                // Editar hóspede
 		            	for (int row = 0; row < modeloHospedes.getRowCount(); row++) {
-		            		try {
-		                    String idHospedeStr =  String.valueOf(modeloHospedes.getValueAt(row, 0)); 
-		                    String nome = String.valueOf(modeloHospedes.getValueAt(row, 1)); 
-		                    String sobrenome =  String.valueOf(modeloHospedes.getValueAt(row, 2)); 
-		                    String dataNascimentoStr = String.valueOf(modeloHospedes.getValueAt(row, 3)); 
-		                    String nacionalidade =  String.valueOf(modeloHospedes.getValueAt(row, 4)); 
-		                    String telefoneStr = String.valueOf(modeloHospedes.getValueAt(row, 5)); 
-		                    String idReservaStr =  String.valueOf(modeloHospedes.getValueAt(row, 6));
-		                    
-		                    int idHospede = Integer.parseInt(idHospedeStr);
-		                    java.util.Date dataNascimento = dateFormat.parse(dataNascimentoStr);
-		                    long telefone = Long.parseLong(telefoneStr);
-		                    int idReserva = Integer.parseInt(idReservaStr);
-		                    
-		                    Hospede hospede = hospedes.get(row);
-		                    hospede.setId(idHospede);
-		                    hospede.setNome(nome);
-		                    hospede.setSobrenome(sobrenome);
-		                    hospede.setDataNascimento(dataNascimento);
-		                    hospede.setNacionalidade(nacionalidade);
-		                    hospede.setTelefone(telefone);
-		                    hospede.setIdReserva(idReserva);
-		                    
+		            		
+		                    Hospede hospede = criarHospedeComLinha(row);
 		                    hospedeController.atualizarHospede(hospede);
 		                    JOptionPane.showMessageDialog(null, "Hospedes atualizados");
 		            		}
-		                    catch(Exception ex) {
-		                    	JOptionPane.showMessageDialog(btnEditar, "Verifique "
-								 		+ "todos os campos se estão no formato adequado");
-		                    		throw new RuntimeException(ex);
-		                    	}
+		                    
 		                    
 		                }
-		            }
-				
 				
 			}
 		});
@@ -354,6 +303,74 @@ public class Buscar extends JFrame {
 		btnDeletar.setBackground(new Color(12, 138, 199));
 		btnDeletar.setBounds(767, 508, 122, 35);
 		btnDeletar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+		btnDeletar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				 if (panel.getSelectedIndex() == 0) {
+		                // Excluir reserva
+					 int selectedRow = tbReservas.getSelectedRow();
+					 if(selectedRow < 0) {
+						 JOptionPane.showMessageDialog(null, "Nenhuma Reserva Selecionada");
+						 return;
+					 }
+					 int choice = JOptionPane.showOptionDialog(
+				                null,
+				                "Tem certeza de que deseja fazer excluir a Reserva?",
+				                "Confirmação",
+				                JOptionPane.YES_NO_OPTION,
+				                JOptionPane.QUESTION_MESSAGE,
+				                null,
+				                new String[]{"Sim", "Não"},
+				                "Sim"
+				        );
+
+				        if (choice == JOptionPane.YES_OPTION) {
+				        	int id = reserva.getId();
+				        	reservaController.excluirReserva(id);
+				           JOptionPane.showMessageDialog(null, "Reserva excluída");
+				           modelo.setRowCount(0);
+				        	
+				        } else if (choice == JOptionPane.NO_OPTION) {
+				        	return;
+				        } else if (choice == JOptionPane.CLOSED_OPTION) {
+				            return;
+				        }
+					 
+				 } 
+				 else { 
+					 int selectedRow = tbHospedes.getSelectedRow();
+					 if(selectedRow < 0) {
+						 JOptionPane.showMessageDialog(null, "Nenhum Hospede Selecionado");
+						 return;
+					 }
+					 int choice = JOptionPane.showOptionDialog(
+				                null,
+				                "Tem certeza de que deseja fazer excluir o Hospede?",
+				                "Confirmação",
+				                JOptionPane.YES_NO_OPTION,
+				                JOptionPane.QUESTION_MESSAGE,
+				                null,
+				                new String[]{"Sim", "Não"},
+				                "Sim"
+				        );
+				        if (choice == JOptionPane.YES_OPTION) {
+				        	int id = hospedes.get(selectedRow).getId();
+				        	hospedeController.excluirHospede(id);
+				           JOptionPane.showMessageDialog(null, "Hospede excluído");
+				           modeloHospedes.removeRow(selectedRow);
+				        	
+				        } else if (choice == JOptionPane.NO_OPTION) {
+				        	return;
+				        } else if (choice == JOptionPane.CLOSED_OPTION) {
+				            return;
+				        }
+				 }
+	 
+				 
+			}
+		});
+	
+		
 		contentPane.add(btnDeletar);
 		
 		JLabel lblExcluir = new JLabel("DELETAR");
@@ -409,7 +426,70 @@ public class Buscar extends JFrame {
 			}
 	}
 	
+	//Este método serve para criar um objeto reserva com os valores atualizados da tabela
+	public Reserva criarReservaComLinha(int linha) {
+		 try {
+			 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				String idReservaStr = String.valueOf(modelo.getValueAt(linha, 0));
+				String dataEntradaStr = String.valueOf(modelo.getValueAt(linha, 1));
+				String dataSaidaStr = String.valueOf(modelo.getValueAt(linha, 2));
+				String valorStr = String.valueOf(modelo.getValueAt(linha, 3));
+				
+	             int idReserva = Integer.parseInt(idReservaStr);	                       
+	             java.util.Date dataEntrada =    dateFormat.parse(dataEntradaStr); 
+	             java.util.Date dataSaida = dateFormat.parse(dataSaidaStr);       
+	             BigDecimal  valor = new BigDecimal(valorStr);
+	             String formaPagamento = (String) modelo.getValueAt(linha, 4);
+	             
+	             reserva.setId(idReserva);
+	             reserva.setDataEntrada(dataEntrada);
+	             reserva.setDataSaida(dataSaida);
+	             reserva.setValor(valor);
+	             reserva.setFormaPagamento(formaPagamento);
+	             return reserva;
+				 }
+				 catch(Exception ex) {
+					 JOptionPane.showMessageDialog(null, "Verifique "
+					 		+ "todos os campos se estão no formato adequado");
+					 throw new RuntimeException(ex);
+				 }
+	}
 	
+	//Este método serve para criar um hospede atualizado com os valores da tabela
+	public Hospede criarHospedeComLinha(int linha) {
+		try {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String idHospedeStr =  String.valueOf(modeloHospedes.getValueAt(linha, 0)); 
+            String nome = String.valueOf(modeloHospedes.getValueAt(linha, 1)); 
+            String sobrenome =  String.valueOf(modeloHospedes.getValueAt(linha, 2)); 
+            String dataNascimentoStr = String.valueOf(modeloHospedes.getValueAt(linha, 3)); 
+            String nacionalidade =  String.valueOf(modeloHospedes.getValueAt(linha, 4)); 
+            String telefoneStr = String.valueOf(modeloHospedes.getValueAt(linha, 5)); 
+            String idReservaStr =  String.valueOf(modeloHospedes.getValueAt(linha, 6));
+            
+            int idHospede = Integer.parseInt(idHospedeStr);
+            java.util.Date dataNascimento = dateFormat.parse(dataNascimentoStr);
+            long telefone = Long.parseLong(telefoneStr);
+            int idReserva = Integer.parseInt(idReservaStr);
+            
+            
+            Hospede hospede = hospedes.get(linha);
+            hospede.setId(idHospede);
+            hospede.setNome(nome);
+            hospede.setSobrenome(sobrenome);
+            hospede.setDataNascimento(dataNascimento);
+            hospede.setNacionalidade(nacionalidade);
+            hospede.setTelefone(telefone);
+            hospede.setIdReserva(idReserva);
+            return hospede;
+           
+    		}
+            catch(Exception ex) {
+            	JOptionPane.showMessageDialog(null, "Verifique "
+				 		+ "todos os campos se estão no formato adequado");
+            		throw new RuntimeException(ex);
+            	}
+	}
 	
 	//Código que permite movimentar a janela pela tela seguindo a posição de "x" e "y"	
 	 private void headerMousePressed(java.awt.event.MouseEvent evt) {

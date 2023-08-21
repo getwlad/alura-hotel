@@ -84,4 +84,20 @@ public class ReservaDAO {
 		}
 		catch(SQLException e) { throw new RuntimeException(e);}
 	}
+	public void excluir(int id) {
+		int linhasAfetadas = 0;
+		String sql = "DELETE from reservas WHERE id = ?;";
+		try(PreparedStatement pstm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+			pstm.setInt(1, id);
+			pstm.execute();
+			try (ResultSet rst = pstm.getGeneratedKeys()) {
+				while (rst.next()) {
+					linhasAfetadas = rst.getInt(1);
+				}
+			}
+		}
+		catch(SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }
