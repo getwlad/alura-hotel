@@ -21,6 +21,9 @@ import javax.swing.DefaultComboBoxModel;
 
 import java.text.DecimalFormat;
 import java.text.Format;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.Date;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -325,6 +328,13 @@ public class ReservasView extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (dataEntrada != null && dataSaida != null && dias > 0) {
+					LocalDate dataEntradaLocal = dataEntrada.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			        LocalDate dataAtual = LocalDate.now();
+			        if(dataEntradaLocal.isBefore(dataAtual)) {
+			        	JOptionPane.showMessageDialog(null, "A reserva não pode ser feita com dias anteriores");
+			        	return;
+			        }
+			        
 					String formaPagamento = (String) ReservasView.txtFormaPagamento.getSelectedItem();
 					Reserva reserva = new Reserva(dataEntrada, dataSaida, formaPagamento, valorTotal);
 					reservaController.save(reserva);

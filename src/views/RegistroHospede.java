@@ -24,7 +24,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.text.Format;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Date;
+import java.time.ZoneId;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
 import javax.swing.SwingConstants;
@@ -297,12 +300,20 @@ public class RegistroHospede extends JFrame {
 				        Date dataNascimento = txtDataN.getDate();
 				        long telefone = Long.parseLong(txtTelefone.getText());
 				        String nacionalidade = (String) txtNacionalidade.getSelectedItem();
-
+				        
 				        if (nome.isEmpty() || sobrenome.isEmpty() || dataNascimento == null || nacionalidade == null) {
 				            JOptionPane.showMessageDialog(null, "Preencha todos os campos obrigatórios.");
 				            return; // Não prosseguir se algum campo estiver vazio ou nulo
 				        }
-
+				        
+				        LocalDate dataNascimentoLocal = dataNascimento.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+				        LocalDate dataAtual = LocalDate.now();
+				        int idade = Period.between(dataNascimentoLocal, dataAtual).getYears();
+				        if(idade < 18) {
+				        	JOptionPane.showMessageDialog(null, "É necessário ter no mínimo 18 anos"
+				        			+ " pra fazer uma reserva");
+				        	return;
+				        }
 				        Hospede hospede = new Hospede(nome, sobrenome, dataNascimento, telefone, nacionalidade, idReserva);
 				        hospedeController.save(hospede);
 				        JOptionPane.showMessageDialog(null, "Hóspede cadastrado com sucesso.");

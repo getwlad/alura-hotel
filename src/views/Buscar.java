@@ -31,8 +31,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.math.BigDecimal;
-import java.sql.Date;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -338,9 +336,10 @@ public class Buscar extends JFrame {
 					 
 				 } 
 				 else { 
+					 //Excluir Hóspede
 					 int selectedRow = tbHospedes.getSelectedRow();
 					 if(selectedRow < 0) {
-						 JOptionPane.showMessageDialog(null, "Nenhum Hospede Selecionado");
+						 JOptionPane.showMessageDialog(null, "Nenhum Hóspede Selecionado");
 						 return;
 					 }
 					 int choice = JOptionPane.showOptionDialog(
@@ -356,7 +355,7 @@ public class Buscar extends JFrame {
 				        if (choice == JOptionPane.YES_OPTION) {
 				        	int id = hospedes.get(selectedRow).getId();
 				        	hospedeController.excluirHospede(id);
-				           JOptionPane.showMessageDialog(null, "Hospede excluído");
+				           JOptionPane.showMessageDialog(null, "Hóspede excluído");
 				           modeloHospedes.removeRow(selectedRow);
 				        	
 				        } else if (choice == JOptionPane.NO_OPTION) {
@@ -407,7 +406,7 @@ public class Buscar extends JFrame {
 			modeloHospedes.setRowCount(0);
 			hospedes = hospedeController.buscarHospedes(sobrenome);
 			if(hospedes.size() <= 0) {
-				JOptionPane.showMessageDialog(null, "Hospede(s) não encontrado");
+				JOptionPane.showMessageDialog(null, "Hóspede(s) não encontrado(s)");
 				return;
 			}
 			
